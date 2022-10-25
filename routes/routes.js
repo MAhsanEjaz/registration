@@ -12,12 +12,12 @@ const app = express.Router();
 
 class UserController{
     static Regitartion = async (req, res)=>{
-        const { name, email, password, password_confirmation, tc } = req.body
+        const { name, email, password, password_confirmation } = req.body
     const user = await registration.findOne({email: email})
     if(user){
             res.send({"status": "failed", "message": "Email already exists"})
         }else{
-            if(name && email && password && password_confirmation && tc){
+            if(name && email && password && password_confirmation ){
                 if (password === password_confirmation){
                     try{
                         const salt = await bcrypt.genSalt(10)
@@ -26,7 +26,7 @@ class UserController{
                             name: name,
                             email: email,
                             password: hashPassword,
-                            tc: tc
+                            // tc: tc
                         })
                         docs.save()
                         const saveUser = await registration.findOne({email: email})
@@ -36,6 +36,7 @@ class UserController{
               res.status(201).send
               ({ "status": "success", "message": "Registration Success", 
               "token": token, "password": password })
+        
                 }catch(err){
                         console.log(err)
                         res.send({ "status": "failed", "message": "Unable to Register" })
@@ -50,21 +51,23 @@ class UserController{
     }
 
     static userRegistration = async (req, res) => {
-        const { name, email, password, password_confirmation, tc } = req.body
+        
+        const { name, email, password, password_confirmation } = req.body
         const user = await registration.findOne({ email: email })
         if (user) {
           res.send({ "status": "failed", "message": "Email already exists" })
         } else {
-          if (name && email && password && password_confirmation && tc) {
+          if (name && email && password && password_confirmation ) {
             if (password === password_confirmation) {
               try {
                 const salt = await bcrypt.genSalt(10)
+                
                 const hashPassword = await bcrypt.hash(password, salt)
                 const doc = new registration({
                   name: name,
                   email: email,
                   password: hashPassword,
-                  tc: tc
+                  // tc: tc
                 })
                 await doc.save()
                 const saved_user = await registration.findOne({ email: email })

@@ -70,7 +70,7 @@ class UserController{
                 const saved_user = await registration.findOne({ email: email })
                 // Generate JWT Token
                 const token = jsonwebtoken.sign({ userID: saved_user._id },"dhsjf3423jhsdf3423df", { expiresIn: '5d' })
-                res.status(201).send({ "status": "success", "message": "Registration Success", "token": token, "password": password })
+                res.status(201).send({ "status": "success", "message": "Registration Success", "token": token, "password": password,"name": name })
               } catch (error) {
                 console.log(error)
                 res.send({ "status": "failed", "message": "Unable to Register" })

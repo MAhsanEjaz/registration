@@ -87,12 +87,40 @@ class UserController{
         }
       }
 
+      static userLogin = async (req, res) => {
+        try {
+          const { email, password } = req.body
+          if (email && password) {
+            const user = await registration.findOne({ email: email })
+            if (user != null) {
+              const isMatch = await bcrypt.compare(password, user.password)
+              if ((user.email === email) && isMatch) {
+                // Generate JWT Token
+                const token = jsonwebtoken.sign({ userID: user._id }, "dhsjf3423jhsdf3423df", { expiresIn: '5d' })
+                res.send({"status": "success", "message": "Login Success", "token": token, "email": email })
+              } else {
+                res.send({ "status": "failed", "message": "Email or Password is not Valid" })
+              }
+            } else {
+              res.send({ "status": "failed", "message": "You are not a Registered User" })
+            }
+          } else {
+            res.send({ "status": "failed", "message": "All Fields are Required" })
+          }
+        } catch (error) {
+          console.log(error)
+          res.send({ "status": "failed", "message": "Unable to Login" })
+        }
+      }
+
+
 
 
 }
 
 
 app.post('/registration',UserController.userRegistration)
+app.post('/login',UserController.userLogin)
 
 
 module.exports = app;

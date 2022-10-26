@@ -1,9 +1,0 @@
-{
-    "version": 1,
-    "images": {
-      "sizes": [256, 384],
-      "domains": ["external-site.com"],
-      "minimumCacheTTL": 60,
-      "formats": ["image/avif", "image/jpg"]
-    }
-  }

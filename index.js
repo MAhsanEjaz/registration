@@ -21,7 +21,6 @@ mongoose.connect(process.env.DATABASE || "mongodb+srv://pidian:pidian12345@clust
         console.log('Database not connected');
     }
 })
-
 app.use('/routes',Routes );
 
 const PORT = process.env.PORT || 8000 

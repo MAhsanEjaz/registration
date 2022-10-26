@@ -30,7 +30,7 @@ const upload = multer({
 
 
 app.post('', upload, (req, res)=>{
-  res.send('upload seccess');
+  res.json({"image":"image successful updated"});
 })
 
 

@@ -1,72 +1,57 @@
 const express = require('express');
 const registration = require('../model/registration');
-
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
 const cors = require('cors');
-
-
 const app = express.Router();
 
 
 
-class UserController{
-    static Regitartion = async (req, res)=>{
-        const { name, email, password, password_confirmation } = req.body
-    const user = await registration.findOne({email: email})
-    if(user){
-            res.send({"status": "failed", "message": "Email already exists"})
-        }else{
-            if(name && email && password && password_confirmation ){
-                if (password === password_confirmation){
-                    try{
-                        const salt = await bcrypt.genSalt(10)
-                        const hashPassword = await bcrypt.hash(password, salt)
-                        const docs = new registration({           
-                            name: name,
-                            email: email,
-                            password: hashPassword,
-                            // tc: tc
-                        })
-                        docs.save()
-                        const saveUser = await registration.findOne({email: email})
+app.use(express.static('./uploads/'));
 
-              const token = jsonwebtoken.sign({ userID: saveUser._id }, "dhsjf3423jhsdf3423df", { expiresIn: '5d' })
+const multer = require('multer');
 
-              res.status(201).send
-              ({ "status": "success", "message": "Registration Success", 
-              "token": token, "password": password })
-        
-                }catch(err){
-                        console.log(err)
-                        res.send({ "status": "failed", "message": "Unable to Register" })
-                    }
-                 }else{
-                    res.send({"message": "Password not match"});
-                }
-             }else{
-                res.send({"massage": "All fields are requird"})
-            }
-        }
-    }
 
+
+const storage = multer.diskStorage({
+
+  destination: function(req, file, cb){
+    cb(null, './uploads/')
+  },
+  filename: function(req, file, cb){
+    cb(null, Date.now() +  file.originalname)
+  }
+
+})
+
+const upload = multer({
+  storage: storage
+}).single('upload');
+
+
+app.post('', upload, (req, res)=>{
+  res.send('upload seccess');
+})
+
+
+class UserController{  
     static userRegistration = async (req, res) => {
-        
-        const { name, email, password, password_confirmation } = req.body
+             const { name, email,   password, password_confirmation } = req.body
         const user = await registration.findOne({ email: email })
         if (user) {
           res.send({ "status": "failed", "message": "Email already exists" })
         } else {
+        
           if (name && email && password && password_confirmation ) {
             if (password === password_confirmation) {
-              try {
-                const salt = await bcrypt.genSalt(10)
-                
+              try {                   
+                const salt = await bcrypt.genSalt(10)            
                 const hashPassword = await bcrypt.hash(password, salt)
                 const doc = new registration({
                   name: name,
                   email: email,
                   password: hashPassword,
+              
                   // tc: tc
                 })
                 await doc.save()
@@ -91,6 +76,9 @@ class UserController{
         try {
           const { email, password } = req.body
           if (email && password) {
+          
+          
+
             const user = await registration.findOne({ email: email })
             if (user != null) {
               const isMatch = await bcrypt.compare(password, user.password)
@@ -112,10 +100,6 @@ class UserController{
           res.send({ "status": "failed", "message": "Unable to Login" })
         }
       }
-
-
-
-
 }
 
 

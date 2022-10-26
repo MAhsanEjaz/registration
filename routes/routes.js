@@ -41,7 +41,8 @@ class UserController{
         if (user) {
           res.send({ "status": "failed", "message": "Email already exists" })
         } else {
-        
+
+          
           if (name && email && password && password_confirmation ) {
             if (password === password_confirmation) {
               try {                   
